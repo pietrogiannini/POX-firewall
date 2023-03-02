@@ -29,10 +29,12 @@ class Firewall(EventMixin):
 
         log.debug("Enabling Firewall Module")
 
+    # This method is called every time a connection between an
+    # OpenFlow switch and the controller is established
     def _handle_ConnectionUp(self, event):
 
         # Iterate through mac_couples, for each pair install a rule on each switch
-        for (src, dst) in self.mac_couples:  # Turn each couple from the policies into a rule
+        for (src, dst) in self.mac_couples:  # Turn each couple into a rule
             # Set of headers for packets to match against if MAC addresses correspond
             match = of.ofp_match()  # Create a match
             match.dl_src = src  # Source MAC address
@@ -40,11 +42,11 @@ class Firewall(EventMixin):
             log.debug("~~> Source Mac is %s", match.dl_src)
             log.debug("~~> Destination Mac is %s", match.dl_dst)
 
-            # install the mods to block matches
+            # An OpenFlow message is sent to the switch, instructing it to install the
+            # rules in its flow table, blocking incoming packets with matching fields
             msg = of.ofp_flow_mod()  # OpenFlow message to install a flow on a switch
             msg.priority = 20  # Set message priority to avoid conflict with the learning bridge setup
             msg.match = match
-            # msg.actions.append(of.ofp_action_output(port=of.OFPP_NONE))  # Output to nowhere (Drop the package)
             event.connection.send(msg)  # Send instruction to switch
 
         log.debug("Firewall rules installed on %s", dpidToStr(event.dpid))
