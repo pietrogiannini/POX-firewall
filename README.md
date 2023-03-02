@@ -20,13 +20,13 @@ To run the simulation, open two terminal windows.
 In the first one, run the POX controller
 
 ```bash
-~/pox$ ./pox.py log.level --DEBUG openflow.of_01 forwarding.l2_learning misc.firewall
+~/pox$ python3 pox.py log.level --DEBUG openflow.of_01 forwarding.l2_learning misc.firewall
 ```
 
 In the second one, run the custom topology with Mininet
 
 ```bash
-~/custom$ python3 customTopo.py --switch ovsk --controller remote
+~/mininet/custom$ sudo python3 customTopo.py --switch ovsk --controller remote
 ```
 
 To test the firewall run the command `mininet> pingall` in the miniet CLI. 
